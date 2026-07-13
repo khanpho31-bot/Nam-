@@ -1,4 +1,9 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect } from "react";import { storage as firebaseStorage } from "./firebase";
+
+if (typeof window !== "undefined") {
+  window.storage = firebaseStorage;
+}
+
 import { Plus, Minus, X, Check, ArrowRight, Globe, Leaf, MessageCircle, Bell } from "lucide-react";
 
 const PRODUCT_BASE = [
