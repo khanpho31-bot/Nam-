@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";import { storage as firebaseStorage } from "./firebase";
+import React, { useState, useMemo, useEffect } from "react";import { storage as firebaseStorage, compressImage } from "./firebase";
 
 if (typeof window !== "undefined") {
   window.storage = firebaseStorage;
@@ -529,13 +529,9 @@ async function saveOwnerPin(pin) {
 
 
 function readFileAsDataURL(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = () => reject(reader.error);
-    reader.readAsDataURL(file);
-  });
+  return compressImage(file);
 }
+
 
 async function loadOrders() {
   if (typeof window === "undefined" || !window.storage) {
