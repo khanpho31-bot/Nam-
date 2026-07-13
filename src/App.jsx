@@ -804,7 +804,12 @@ export default function MatchaShop() {
       const existing = await loadOrders();
       const ok = await saveOrders([...existing, orderRecord]);
       if (!ok) throw new Error("save failed");
-      setOrderNo(newOrderNo);
+      setOrderNo(newOrderNo);      try {
+        const myOrders = JSON.parse(localStorage.getItem("my-order-numbers") || "[]");
+        myOrders.push(newOrderNo);
+        localStorage.setItem("my-order-numbers", JSON.stringify(myOrders));
+      } catch (_) {}
+
       setCheckoutStep("done");
     } catch (err) {
       console.error("Order submit error:", err);
