@@ -547,6 +547,24 @@ async function loadOrders() {
     return [];
   }
 }
+async function loadMyOrderHistory() {
+  try {
+    const raw = localStorage.getItem("my-order-numbers");
+    const myNos = raw ? JSON.parse(raw) : [];
+    if (myNos.length === 0) return [];
+    const all = await loadOrders();
+    const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
+    return all
+      .filter((o) => myNos.includes(o.orderNo))
+      .filter((o) => {
+        const t = o.createdAt ? new Date(o.createdAt).getTime() : 0;
+        return t >= cutoff;
+      })
+      .reverse();
+  } catch (_) {
+    return [];
+  }
+}
 
 async function saveOrders(orders) {
   if (typeof window === "undefined" || !window.storage) {
