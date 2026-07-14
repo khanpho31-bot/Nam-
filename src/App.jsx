@@ -565,6 +565,14 @@ async function loadMyOrderHistory() {
     return [];
   }
 }
+async function openOrderHistory() {
+  setMode("order-history");
+  setHistoryLoading(true);
+  const history = await loadMyOrderHistory();
+  setOrderHistory(history);
+  setHistoryLoading(false);
+}
+
 
 async function saveOrders(orders) {
   if (typeof window === "undefined" || !window.storage) {
@@ -682,6 +690,9 @@ export default function MatchaShop() {
   const [form, setForm] = useState({ name: "", phone: "", pickupDate: "", pickupTime: "" });
   const [orderNo, setOrderNo] = useState(null);
   const [mode, setMode] = useState("shop"); // shop | owner-login | owner-dashboard
+  const [orderHistory, setOrderHistory] = useState([]);
+const [historyLoading, setHistoryLoading] = useState(false);
+
   const [pinInput, setPinInput] = useState("");
   const [pinError, setPinError] = useState(false);
   const [orders, setOrders] = useState([]);
@@ -1468,6 +1479,15 @@ export default function MatchaShop() {
                   <button className="cta" style={{ background: "#3E4A26" }} onClick={resetOrder}>
                     {t.continueShopping}
                   </button>
+                  <button
+  type="button"
+  className="cta-secondary"
+  style={{ marginTop: 8 }}
+  onClick={openOrderHistory}
+>
+  {t.viewOrderHistory || "ดูประวัติคำสั่งซื้อ"}
+</button>
+
                 </div>
               </div>
             )}
@@ -1476,6 +1496,27 @@ export default function MatchaShop() {
       )}
       </>
       )}
+
+      {mode === "order-history" && (
+  <div className="owner-screen">
+    <div className="owner-card">
+      <h2 className="display">{t.orderHistoryTitle || "ประวัติคำสั่งซื้อ"}</h2>
+      {historyLoading && <div>{t.loading || "กำลังโหลด..."}</div>}
+      {!historyLoading && orderHistory.length === 0 && (
+        <div>{t.noOrderHistory || "ไม่พบประวัติคำสั่งซื้อ (ย้อนหลัง 30 วัน)"}</div>
+      )}
+      {!historyLoading && orderHistory.map((o) => (
+        <div key={o.orderNo} style={{ borderBottom: "1px solid #ddd", padding: "12px 0" }}>
+          <div style={{ fontWeight: 600 }}>{t.orderNo} {o.orderNo}</div>
+          <div>{o.name} — {o.pickupDate} {o.pickupTime}</div>
+        </div>
+      ))}
+      <button type="button" className="cta" onClick={() => setMode("shop")} style={{ marginTop: 16 }}>
+        {t.back || "กลับ"}
+      </button>
+    </div>
+  </div>
+)}
 
       {mode === "owner-login" && (
         <div className="owner-screen">
