@@ -566,6 +566,7 @@ async function loadMyOrderHistory() {
   }
 }
 async function openOrderHistory() {
+  setDrawerOpen(false);
   setMode("order-history");
   setHistoryLoading(true);
   const history = await loadMyOrderHistory();
